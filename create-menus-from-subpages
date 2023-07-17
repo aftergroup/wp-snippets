@@ -1,0 +1,31 @@
+// Add action after theme setup
+add_action('after_setup_theme', 'create_subpages_menu');
+
+function create_subpages_menu() {
+    // Check if menu exists
+    $menu_name = 'Subpage Menu';
+    $menu_exists = wp_get_nav_menu_object($menu_name);
+
+    if( !$menu_exists) {
+        // Create new menu and get its id
+        $menu_id = wp_create_nav_menu($menu_name);
+        
+        // Get the ID of the parent page using its slug
+        $parent_page = get_page_by_path('page/subpage');
+        $parent_id = $parent_page->ID;
+        
+        // Fetch all child pages
+        $child_pages = get_pages(array('child_of' => $parent_id));
+        
+        // Loop through each child page and add to the menu
+        foreach($child_pages as $page) {
+            wp_update_nav_menu_item($menu_id, 0, array(
+                'menu-item-title' => __($page->post_title),
+                'menu-item-object' => 'page',
+                'menu-item-object-id' => $page->ID,
+                'menu-item-type' => 'post_type',
+                'menu-item-status' => 'publish'
+            ));
+        }
+    }
+}
