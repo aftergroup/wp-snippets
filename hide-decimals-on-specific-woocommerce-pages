@@ -1,0 +1,9 @@
+add_filter( 'formatted_woocommerce_price', 'remove_decimals_from_price', 10, 5 );
+
+function remove_decimals_from_price( $formatted_price, $price, $decimal_separator, $thousand_separator, $decimals ) {
+    if ( strpos($_SERVER['REQUEST_URI'], 'rvsp') !== false ) {
+        $formatted_price = number_format( intval( $price ), 0, $decimal_separator, $thousand_separator ) . ' EUR'; 
+    }
+
+    return $formatted_price;
+}
